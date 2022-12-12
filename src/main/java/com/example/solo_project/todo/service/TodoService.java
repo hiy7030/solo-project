@@ -38,6 +38,8 @@ public class TodoService { // 검증 메서드 구현
         // 변경 가능한 것은 title, completed
         Optional.ofNullable(todo.getTitle())
                 .ifPresent(title -> findTodo.setTitle(title));
+        Optional.ofNullable(todo.getTodoOrder())
+                        .ifPresent(todoOrder -> findTodo.setTodoOrder(todoOrder));
 
         Optional.ofNullable(todo.isCompleted())
                 .ifPresent(completed -> findTodo.setCompleted(completed));
@@ -53,7 +55,7 @@ public class TodoService { // 검증 메서드 구현
     // todo find all : request - page, size, response - page<ToDO>
     public Page<Todo> findTodos(int page, int size) {
         // findAll(Pageable) -> pageable =  PageRequest.of(page, size, sort)
-        Pageable pageable = PageRequest.of(page-1, size, Sort.by("todoOrder").descending());
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by("todoId").descending());
         Page<Todo> todoPage = todoRepository.findAll(pageable);
 
         return todoPage;
