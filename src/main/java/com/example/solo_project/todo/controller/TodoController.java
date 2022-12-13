@@ -19,6 +19,7 @@ import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/todos")
 @Validated
@@ -56,31 +57,40 @@ public class TodoController {
         Todo updateTodo = todoService.updateTodo(todo);
         TodoDto.Response response = mapper.TodoToTodoResponseDto(updateTodo);
 
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     // 할 일 조회 - request : ToDoId, response - ToDo instance
     @GetMapping("/{todo-id}")
-    public ResponseEntity getTodo(@PathVariable("todo-id") @Positive long toDoId) {
-        Todo todo = todoService.findTodo(toDoId);
+    public ResponseEntity getTodo(@PathVariable("todo-id") @Positive long todoId) {
+        Todo todo = todoService.findTodo(todoId);
         TodoDto.Response response = mapper.TodoToTodoResponseDto(todo);
-        return new ResponseEntity<>(new SingleResponseDto<>(response), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    // 할 일 목록 조회 - request : page, size, response - page<Todo>
+//    // 할 일 목록 조회 - request : page, size, response - page<Todo>
+//    @GetMapping
+//    public ResponseEntity getTodos(@Positive @RequestParam int page,
+//                                   @Positive @RequestParam int size) {
+//        // pageInfo
+//        Page<Todo> todoPage = todoService.findTodos(page, size);
+//        PageInfo pageInfo = new PageInfo(page, size, todoPage.getTotalPages(), (int) todoPage.getTotalElements());
+//        // todoList
+//        List<Todo> todoList = todoPage.getContent();
+//        List<TodoDto.Response> response = mapper.TodoListToTodoResponseDtos(todoList);
+//        return new ResponseEntity<>(new MultiResponseDto<>(response, pageInfo), HttpStatus.OK);
+//    }
+
     @GetMapping
-    public ResponseEntity getTodos(@Positive @RequestParam int page,
-                                   @Positive @RequestParam int size) {
-        // pageInfo
-        Page<Todo> todoPage = todoService.findTodos(page, size);
-        PageInfo pageInfo = new PageInfo(page, size, todoPage.getTotalPages(), (int) todoPage.getTotalElements());
-        // todoList
-        List<Todo> todoList = todoPage.getContent();
-        List<TodoDto.Response> response = mapper.TodoListToTodoResponseDtos(todoList);
-        return new ResponseEntity<>(new MultiResponseDto<>(response, pageInfo), HttpStatus.OK);
+    public ResponseEntity getTodos() {
+        List<Todo> todoList = todoService.findTodos();
+        List<TodoDto.Response> responses = mapper.TodoListToTodoResponseDtos(todoList);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
+
     // 할 일 삭제 - request : ToDoId;
     @DeleteMapping("/{todo-id}")
-    public ResponseEntity deleteTodo(@PathVariable("todo-id") @Positive long toDoId) {
-        todoService.deleteTodo(toDoId);
+    public ResponseEntity deleteTodo(@PathVariable("todo-id") @Positive long todoId) {
+        todoService.deleteTodo(todoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     // 할일 전체 삭제

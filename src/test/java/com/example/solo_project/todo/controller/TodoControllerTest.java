@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -96,8 +97,8 @@ public class TodoControllerTest {
 
         //then
         MvcResult result = actions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.title").value(patch.getTitle()))
-                .andExpect(jsonPath("$.data.completed").value(patch.isCompleted()))
+                .andExpect(jsonPath("$.title").value(patch.getTitle()))
+                .andExpect(jsonPath("$.completed").value(patch.isCompleted()))
                 .andReturn();
 
     }
@@ -124,47 +125,69 @@ public class TodoControllerTest {
                         .content(content));
         //then
         MvcResult result = actions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.title").value(post.getTitle()))
-                .andExpect(jsonPath("$.data.todoOrder").value(post.getTodoOrder()))
-                .andExpect(jsonPath("$.data.completed").value(todo.isCompleted()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.todoOrder").value(post.getTodoOrder()))
+                .andExpect(jsonPath("$.completed").value(todo.isCompleted()))
                 .andReturn();
     }
 
+//    @Test
+//    void getTodosTest() throws Exception {
+//        //given -> page, size
+//        Todo todo1 = new Todo("운동하기", 1, false);
+//        todo1.setTodoId(1L);
+//
+//        Todo todo2 = new Todo("공부하기", 2, true);
+//        todo2.setTodoId(2L);
+//
+//        //페이지네이션
+//        Page<Todo> todoPage = new PageImpl<>(List.of(todo1, todo2),
+//                PageRequest.of(0, 10, Sort.by("todoId").descending()),2);
+//
+//        given(todoService.findTodos(Mockito.anyInt(), Mockito.anyInt())).willReturn(todoPage);
+//
+//        String page = "1";
+//        String size = "10";
+//        MultiValueMap<String, String> pages = new LinkedMultiValueMap<>();
+//        pages.add("page", page);
+//        pages.add("size", size);
+//
+//        //when
+//        ResultActions actions =
+//                mockMvc.perform(get("/todos")
+//                                .params(pages)
+//                        .accept(MediaType.APPLICATION_JSON));
+//        //then
+//        MvcResult result =
+//                actions.andExpect(status().isOk())
+//                        .andExpect(jsonPath("$.data").isArray())
+//                        .andReturn();
+//
+//        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.data");
+//
+//        assertThat(list.size(), is(2));
+//    }
+
     @Test
     void getTodosTest() throws Exception {
-        //given -> page, size
+        //given -> 객체 두개
         Todo todo1 = new Todo("운동하기", 1, false);
         todo1.setTodoId(1L);
 
-        Todo todo2 = new Todo("공부하기", 2, true);
+        Todo todo2 = new Todo("말하기", 2, false);
         todo2.setTodoId(2L);
 
-        //페이지네이션
-        Page<Todo> todoPage = new PageImpl<>(List.of(todo1, todo2),
-                PageRequest.of(0, 10, Sort.by("todoId").descending()),2);
+        List<Todo> todoList = new ArrayList<>(List.of(todo1, todo2));
 
-        given(todoService.findTodos(Mockito.anyInt(), Mockito.anyInt())).willReturn(todoPage);
-
-        String page = "1";
-        String size = "10";
-        MultiValueMap<String, String> pages = new LinkedMultiValueMap<>();
-        pages.add("page", page);
-        pages.add("size", size);
-
+        given(todoService.findTodos()).willReturn(todoList);
         //when
         ResultActions actions =
                 mockMvc.perform(get("/todos")
-                                .params(pages)
                         .accept(MediaType.APPLICATION_JSON));
         //then
-        MvcResult result =
-                actions.andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data").isArray())
-                        .andReturn();
-
-        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.data");
-
-        assertThat(list.size(), is(2));
+        MvcResult result = actions.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andReturn();
     }
 
     @Test

@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.valueOf;
+
 @Service
 @Transactional
 public class TodoService { // 검증 메서드 구현
@@ -53,13 +56,19 @@ public class TodoService { // 검증 메서드 구현
         return findVerifiedTodo(todoId);
     }
     // todo find all : request - page, size, response - page<ToDO>
-    public Page<Todo> findTodos(int page, int size) {
-        // findAll(Pageable) -> pageable =  PageRequest.of(page, size, sort)
-        Pageable pageable = PageRequest.of(page-1, size, Sort.by("todoId").descending());
-        Page<Todo> todoPage = todoRepository.findAll(pageable);
+//    public Page<Todo> findTodos(int page, int size) {
+//        // findAll(Pageable) -> pageable =  PageRequest.of(page, size, sort)
+//        Pageable pageable = PageRequest.of(page-1, size, Sort.by("todoId").descending());
+//        Page<Todo> todoPage = todoRepository.findAll(pageable);
+//
+//        return todoPage;
+//    }
 
-        return todoPage;
+    public List<Todo> findTodos() {
+        List<Todo> todoList = todoRepository.findAll();
+        return todoList;
     }
+
     // todo delete one : request - TodoId
     public void deleteTodo(long todoId) {
         // 회원 찾기
@@ -72,7 +81,7 @@ public class TodoService { // 검증 메서드 구현
         //전부 삭제 completed = true 인 것만
         List<Todo> todoList = todoRepository.findAll();
         todoList.stream()
-                .filter(todo -> todo.isCompleted() == true)
+                .filter(todo -> valueOf(todo.isCompleted()).equals(TRUE))
                 .forEach(todo -> todoRepository.deleteById(todo.getTodoId()));
     }
 
