@@ -99,6 +99,8 @@ public class TodoControllerTest {
         MvcResult result = actions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(patch.getTitle()))
                 .andExpect(jsonPath("$.completed").value(patch.isCompleted()))
+                .andExpect(jsonPath("$.todoOrder").value(patch.getTodoOrder()))
+                .andExpect(jsonPath("$.url").value("http://localhost:8080/todos/" + todo.getTodoId()))
                 .andReturn();
 
     }
@@ -128,6 +130,7 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.title").value(post.getTitle()))
                 .andExpect(jsonPath("$.todoOrder").value(post.getTodoOrder()))
                 .andExpect(jsonPath("$.completed").value(todo.isCompleted()))
+                .andExpect(jsonPath("$.url").value("http://localhost:8080/todos/" + todo.getTodoId()))
                 .andReturn();
     }
 

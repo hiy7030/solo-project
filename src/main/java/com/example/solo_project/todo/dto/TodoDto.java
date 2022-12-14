@@ -1,5 +1,6 @@
 package com.example.solo_project.todo.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,10 +33,12 @@ public class TodoDto {
 
     @Getter
     @Setter
+    @Builder
     public static class Response {
         private long todoId;
         private String title;
         private int todoOrder;
         private boolean completed;
+        private String url;
     }
 }

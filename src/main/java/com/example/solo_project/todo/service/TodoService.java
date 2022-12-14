@@ -43,7 +43,6 @@ public class TodoService { // 검증 메서드 구현
                 .ifPresent(title -> findTodo.setTitle(title));
         Optional.ofNullable(todo.getTodoOrder())
                         .ifPresent(todoOrder -> findTodo.setTodoOrder(todoOrder));
-
         Optional.ofNullable(todo.isCompleted())
                 .ifPresent(completed -> findTodo.setCompleted(completed));
 
@@ -93,7 +92,7 @@ public class TodoService { // 검증 메서드 구현
         }
     }
     // 존재 유무 확인 후 리턴
-    private Todo findVerifiedTodo(long todoId) {
+    public Todo findVerifiedTodo(long todoId) {
         Optional<Todo> optionalTodo = todoRepository.findById(todoId);
         Todo todo = optionalTodo.orElseThrow(
                 () -> new BusinessLoginException(ExceptionCode.TODO_NOT_FOUND)

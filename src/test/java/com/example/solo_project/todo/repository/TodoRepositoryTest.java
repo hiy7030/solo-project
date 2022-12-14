@@ -21,11 +21,6 @@ public class TodoRepositoryTest {
     @Autowired
     private TodoRepository todoRepository;
 
-    @BeforeEach
-    void init() {
-        todoRepository.deleteAll();
-    }
-
     @Test
     void saveTodoTest() {
         //given -> 저장할 객체
@@ -53,9 +48,7 @@ public class TodoRepositoryTest {
 
         //when -> findByTodoOrder
         Optional<Todo> optionalTodo = todoRepository.findByTodoOrder(todo.getTodoOrder());
-        Todo findTodo = optionalTodo.orElseThrow(
-                () -> new BusinessLoginException(ExceptionCode.TODO_NOT_FOUND)
-        );
+        Todo findTodo = optionalTodo.get();
 
         //then -> 객체와 찾아온 객체 비교
         assertTrue(todo.getTitle().equals(findTodo.getTitle()));
@@ -73,9 +66,7 @@ public class TodoRepositoryTest {
         todoRepository.save(todo);
         // when -> findById()
         Optional<Todo> optionalTodo = todoRepository.findById(todo.getTodoId());
-        Todo findTodo = optionalTodo.orElseThrow(
-                ()-> new BusinessLoginException(ExceptionCode.TODO_NOT_FOUND)
-        );
+        Todo findTodo = optionalTodo.get();
         // then
         assertTrue(todo.getTitle().equals(findTodo.getTitle()));
         assertThat(todo.getTodoOrder(), is(findTodo.getTodoOrder()));
@@ -118,26 +109,26 @@ public class TodoRepositoryTest {
 
     }
 
-    // 투두 true만 삭제
-    @Test
-    void deleteTodosTest() {
-        //given
-        Todo todo1 = new Todo("뭐하기", 1, false);
-        todo1.setTodoId(1L);
-        Todo todo2 = new Todo("이거하기", 3, true);
-        todo2.setTodoId(2L);
-        Todo todo3 = new Todo("저거하기", 2, false);
-        todo3.setTodoId(3L);
-
-        todoRepository.save(todo1);
-        todoRepository.save(todo2);
-        todoRepository.save(todo3);
-        //when
-        List<Todo> todoList = todoRepository.findAll();
-        todoList.stream().filter(todo -> valueOf(todo.isCompleted()).equals(TRUE))
-                .forEach(todo -> todoRepository.deleteById(todo.getTodoId()));
-        //then
-        List<Todo> assertList = todoRepository.findAll();
-        assertList.stream().forEach(todo -> assertThat(valueOf(todo.isCompleted()), is(FALSE)));
-    }
+//    // 투두 true만 삭제 -> service 테스트가 아닌가?
+//    @Test
+//    void deleteTodosTest() {
+//        //given
+//        Todo todo1 = new Todo("뭐하기", 1, false);
+//        todo1.setTodoId(1L);
+//        Todo todo2 = new Todo("이거하기", 3, true);
+//        todo2.setTodoId(2L);
+//        Todo todo3 = new Todo("저거하기", 2, false);
+//        todo3.setTodoId(3L);
+//
+//        todoRepository.save(todo1);
+//        todoRepository.save(todo2);
+//        todoRepository.save(todo3);
+//        //when
+//        List<Todo> todoList = todoRepository.findAll();
+//        todoList.stream().filter(todo -> valueOf(todo.isCompleted()).equals(TRUE))
+//                .forEach(todo -> todoRepository.deleteById(todo.getTodoId()));
+//        //then
+//        List<Todo> assertList = todoRepository.findAll();
+//        assertList.stream().forEach(todo -> assertThat(valueOf(todo.isCompleted()), is(FALSE)));
+//    }
 }

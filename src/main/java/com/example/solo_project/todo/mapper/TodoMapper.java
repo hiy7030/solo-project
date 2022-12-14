@@ -13,7 +13,23 @@ public interface TodoMapper {
     // patch -> entity
     Todo TodoPatchDtoToTodO(TodoDto.Patch todoPatchDto);
     // entity -> response
-    TodoDto.Response TodoToTodoResponseDto(Todo todo);
+    default TodoDto.Response TodoToTodoResponseDto(Todo todo) {
+        if ( todo == null ) {
+            return null;
+        }
+
+        TodoDto.Response response = TodoDto.Response
+                .builder()
+                .todoId(todo.getTodoId())
+                .title(todo.getTitle())
+                .todoOrder(todo.getTodoOrder())
+                .completed(todo.isCompleted())
+                .url("http://localhost:8080/todos/" + todo.getTodoId())
+                .build();
+
+        return response;
+
+    }
     // List<Todo> -> response
     List<TodoDto.Response> TodoListToTodoResponseDtos(List<Todo> todoList);
 }

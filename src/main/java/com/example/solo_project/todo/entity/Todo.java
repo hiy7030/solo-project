@@ -20,7 +20,7 @@ public class Todo extends Audit {
     private String title;
 
     //우선순위- 고유값? 중복허용??
-    @Column(unique = true)
+    @Column
     private int todoOrder;
 
     @Column(nullable = false)
